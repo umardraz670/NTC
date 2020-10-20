@@ -11,12 +11,14 @@ package ntc;
  */
 public class productsBeans {
     int rowNo;
+    int sku;
     String description;
     int qty;
     float rate,amount;
 
-    public productsBeans(int rowNo, String description, int qty, float rate, float amount) {
+    public productsBeans(int rowNo, int sku, String description, int qty, float rate, float amount) {
         this.rowNo = rowNo;
+        this.sku = sku;
         this.description = description;
         this.qty = qty;
         this.rate = rate;
@@ -29,6 +31,14 @@ public class productsBeans {
 
     public void setRowNo(int rowNo) {
         this.rowNo = rowNo;
+    }
+
+    public int getSku() {
+        return sku;
+    }
+
+    public void setSku(int sku) {
+        this.sku = sku;
     }
 
     public String getDescription() {
@@ -62,6 +72,8 @@ public class productsBeans {
     public void setAmount(float amount) {
         this.amount = amount;
     }
+
+    
     
     
 }

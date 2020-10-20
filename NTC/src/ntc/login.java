@@ -32,7 +32,7 @@ public class login extends javax.swing.JFrame {
     private final static String PROPERTY_FILE="./src/ntc/config.properties";
     public static boolean property_read=false;
     public static String permissions="";
-    public static String USER_ID="";
+    
     public login() {
         initComponents();
         setLocationRelativeTo(null);
@@ -54,8 +54,7 @@ public class login extends javax.swing.JFrame {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
             System.exit(-1);
-        } 
-        
+        }     
     }
 
     /**
@@ -212,7 +211,7 @@ public class login extends javax.swing.JFrame {
                     if(res.next()){
                         permissions=res.getString("rights");
                         boolean active="YES".equals(res.getString("active"));
-                        USER_ID=res.getString("username");
+                        Utils.USER_ID=res.getLong("ID");
                         if(active){
                             new MainDesk().show();
                             this.hide();

@@ -6,9 +6,9 @@
 package ntc;
 
 import java.beans.PropertyVetoException;
+import java.util.Timer;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
 /**
  *
  * @author Dell 7010
@@ -18,11 +18,15 @@ public final class MainDesk extends javax.swing.JFrame {
     /**
      * Creates new form MainDesk
      */
+    private final Timer timer;
+    private final Service s;
     public MainDesk() {
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        checkPermissions();    
-        
+        timer=new Timer();
+        checkPermissions();
+        s=new Service();
+        s.run();
     }
     
     public void checkPermissions(){

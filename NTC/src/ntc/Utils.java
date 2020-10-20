@@ -13,6 +13,12 @@ import javax.swing.text.MaskFormatter;
  * @author Dell 7010
  */
 public class Utils {
+    public static String SALE_DAY;
+    public static float CASH_SALE=0;
+    public static float CREDIT_SALE=0;
+    public static float SALE_LOSS=0;
+    public static float SALE_RETURN=0;
+    public static long USER_ID=0;
     public static MaskFormatter formatCellNumber() {
         MaskFormatter formatter = null;
         try {

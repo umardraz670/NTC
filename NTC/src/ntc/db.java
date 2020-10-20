@@ -14,6 +14,7 @@ public class db {
         Connection con;
         Class.forName(login.config.getProperty("db.driver"));
         con = DriverManager.getConnection(login.config.getProperty("db.url"), login.config.getProperty("db.user"), login.config.getProperty("db.password"));
+        con.setAutoCommit(false);
         return con;
     }
 }
