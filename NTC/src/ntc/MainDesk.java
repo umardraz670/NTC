@@ -67,19 +67,20 @@ public final class MainDesk extends javax.swing.JFrame {
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 588, Short.MAX_VALUE)
         );
 
-        users.setText("User");
+        users.setText("USERS  ");
         users.setFocusable(false);
-        users.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        users.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
         jMenuBar1.add(users);
 
-        customers.setText("Customers");
+        customers.setText("CUSTOMERS  ");
         customers.setFocusable(false);
-        customers.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        customers.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
 
-        jMenuItem1.setText("New Customer     ");
+        jMenuItem1.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
+        jMenuItem1.setText("New Customer          ");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -89,11 +90,12 @@ public final class MainDesk extends javax.swing.JFrame {
 
         jMenuBar1.add(customers);
 
-        sales.setText("Sales");
+        sales.setText("SALES  ");
         sales.setFocusable(false);
-        sales.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        sales.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
 
-        jMenuItem2.setText("Counter Sale     ");
+        jMenuItem2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jMenuItem2.setText("Counter Sale          ");
         jMenuItem2.setMinimumSize(new java.awt.Dimension(780, 680));
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,11 +106,12 @@ public final class MainDesk extends javax.swing.JFrame {
 
         jMenuBar1.add(sales);
 
-        jMenu8.setText("Employees");
+        jMenu8.setText("PRODUCTS  ");
         jMenu8.setFocusable(false);
-        jMenu8.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        jMenu8.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
 
-        jMenuItem7.setText("New Employee     ");
+        jMenuItem7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jMenuItem7.setText("Add Product          ");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -118,9 +121,9 @@ public final class MainDesk extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu8);
 
-        jMenu7.setText("About Us");
+        jMenu7.setText("ABOUT US  ");
         jMenu7.setFocusable(false);
-        jMenu7.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        jMenu7.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
         jMenuBar1.add(jMenu7);
 
         setJMenuBar(jMenuBar1);
@@ -159,15 +162,15 @@ public final class MainDesk extends javax.swing.JFrame {
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // TODO add your handling code here:
-//        try {
-//            NewEmployee obj=new NewEmployee();
-//            jDesktopPane1.add(obj);
-//            obj.show();
-//            obj.setLocation((int)(jDesktopPane1.getWidth()-obj.getWidth())/2,(int)(jDesktopPane1.getHeight()-obj.getHeight())/2);
-//            obj.setSelected(true);
-//        } catch (PropertyVetoException e) {
-//            JOptionPane.showMessageDialog(rootPane, e.getMessage());
-//        }   
+        NewProduct obj = new NewProduct();
+        jDesktopPane1.add(obj);
+        obj.show();
+        obj.setLocation((int)(jDesktopPane1.getWidth()-obj.getWidth())/2,(int)(jDesktopPane1.getHeight()-obj.getHeight())/2);
+        try {
+            obj.setSelected(true);
+        } catch (PropertyVetoException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**

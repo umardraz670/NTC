@@ -5,8 +5,26 @@
  */
 package ntc;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Map;
+import javax.swing.JOptionPane;
 import javax.swing.text.MaskFormatter;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -28,6 +46,34 @@ public class Utils {
             System.exit(-1);
         }
         return formatter;
+    }
+    public static boolean cashSale(float netBill){
+        try (Connection con=db.getConnection()){
+            PreparedStatement ps=con.prepareStatement("update sales set cash_sale=cash_sale+? where sale_day=?");
+            ps.setFloat(1, netBill);
+            ps.setString(2, SALE_DAY);
+            return ps.executeUpdate()==1;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            System.exit(-1);
+        }
+        return false;
+    }
+    public static void printInvoice(Map<String,Object> parameters,int pages){
+        try {
+            JasperReport report=JasperCompileManager.compileReport(new FileInputStream(new File("./src/reports/saleInvoice.jrxml")));
+            JasperPrint print=JasperFillManager.fillReport(report, parameters,new JREmptyDataSource());
+            JasperViewer.viewReport(print,false);
+            if(pages==2){
+                JasperPrintManager.printReport(print, false);
+                JasperPrintManager.printReport(print, false);
+            }else{
+                JasperPrintManager.printReport(print, false);
+            }
+            //JasperPrintManager.printReport(print, false);
+        } catch (JRException |FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
     
 }

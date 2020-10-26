@@ -12,11 +12,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.RowFilter;
@@ -24,6 +26,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  *
@@ -42,9 +45,10 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
     private Map<String, productsBeans> selectedProducts;
     private int counter;
     private long total = 0, discount = 0, grossTotal = 0, freight = 0, netTotal = 0;
-    private Action action;
+    private final Action action;
     private boolean customerCheck = false;
     private long customerID = 1;
+    private String customerAddress = "";
 
     public CounterSale(Frame parent) {
         nf = NumberFormat.getIntegerInstance();
@@ -65,14 +69,11 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         selectedProducts = new HashMap<>();
         getAllProducts();
         counter = 0;
-        
-        getRootPane().getInputMap().put(KeyStroke.getKeyStroke("F9"), action);
-        
-
+        getRootPane().registerKeyboardAction(action, KeyStroke.getKeyStroke("F9"), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private void getAllProducts() {
-        try (Connection con = db.getConnection()) {
+        try ( Connection con = db.getConnection()) {
             ResultSet res = con.createStatement().executeQuery("select sku,description,rate from products");
             if (!res.next()) {
                 System.out.println("No Records");
@@ -101,7 +102,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         long invoice = 0;
         if (customerCheck) {
             if (selectedProducts.size() > 0) {
-                try (Connection con = db.getConnection()) {
+                try ( Connection con = db.getConnection()) {
                     con.createStatement().executeUpdate("savepoint a");
                     ResultSet res = con.createStatement().executeQuery("select max(invoice) from sale_invoices");
                     if (res.next()) {
@@ -109,7 +110,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
                     }
                     System.out.println(invoice + 1);
                     PreparedStatement ps = con.prepareStatement("insert into sale_invoices(invoice,total,discount,gross_total,freight,net_total,fk_customer,fk_sale_day,fk_user) values(?,?,?,?,?,?,?,?,?)");
-                    ps.setLong(1, invoice + 1);
+                    ps.setLong(1, ++invoice);
                     ps.setLong(2, total);
                     ps.setLong(3, discount);
                     ps.setLong(4, grossTotal);
@@ -126,9 +127,10 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
                         ps.setString(2, str[1]);
                         ps.setString(3, str[2]);
                         ps.setLong(4, invoice);
-                        if (ps.executeUpdate() == 1) {
+                        if (ps.executeUpdate() == 1 && Utils.cashSale((netTotal - discount) + freight)) {
                             con.commit();
-                            JOptionPane.showMessageDialog(rootPane, "Sale Invoice ( " + (invoice + 1) + " ) Saved !");
+                            JOptionPane.showMessageDialog(rootPane, "Sale Invoice ( " + (invoice) + " ) Saved !");
+                            getPrintInvoice(invoice);
                             nextInvoice();
                         } else {
                             JOptionPane.showMessageDialog(rootPane, "Error While Saving Invoice Data\nCall Your Vander");
@@ -176,7 +178,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
     }
 
     private void nextInvoice() {
-        customer.setText("03");
+        customer.setText("");
         customerCheck = false;
         customerID = 1;
         product.setText("");
@@ -185,20 +187,43 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         for (int i = rowCount - 1; i >= 0; i--) {
             cartTable.removeRow(i);
         }
-        total=0;
-        discount=0;
-        grossTotal=0;
-        freight=0;
-        netTotal=0;
+        total = 0;
+        discount = 0;
+        grossTotal = 0;
+        freight = 0;
+        netTotal = 0;
         totalBill.setText("");
         discountBill.setText("");
         grossBill.setText("");
         freightBill.setText("");
         netBill.setText("");
         jCheckBox1.setSelected(true);
-        counter=0;
+        counter = 0;
         customer.grabFocus();
+        cellNo.setText("03");
+        cellNo.grabFocus();
 
+    }
+
+    private void getPrintInvoice(long invoiceNo) {
+        Map<String, Object> parameters = new HashMap<>();
+        ArrayList<products> arrayList = new ArrayList<>();
+        for (int i = 0; i < cartTable.getRowCount(); i++) {
+            arrayList.add(new products(cartTable.getValueAt(i, 1).toString(), (int) cartTable.getValueAt(i, 2), (float) cartTable.getValueAt(i, 3), (float) cartTable.getValueAt(i, 4)));
+        }
+        System.out.println(arrayList.size());
+        parameters.put("customerName", customer.getText());
+        parameters.put("customerAddress", customerAddress);
+        parameters.put("customerCell", cellNo.getText());
+        parameters.put("saleDate", Utils.SALE_DAY);
+        parameters.put("invoiceNo", invoiceNo);
+        parameters.put("total", total);
+        parameters.put("grossTotal", grossTotal);
+        parameters.put("freight", freight);
+        parameters.put("netTotal", (netTotal - discount) + freight);
+        JRBeanCollectionDataSource dataSet = new JRBeanCollectionDataSource(arrayList);
+        parameters.put("dataset", dataSet);
+        Utils.printInvoice(parameters, jCheckBox1.isSelected() == true ? 2 : 1);
     }
 
     /**
@@ -335,15 +360,16 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(product, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(cellNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(customer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(product, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
+                        .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(cellNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckBox1)
@@ -628,13 +654,14 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
     private void cellNoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cellNoKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            try (Connection con = db.getConnection()) {
-                PreparedStatement ps = con.prepareStatement("select cust_id,cust_name from customers where cell_no=? and active='YES'");
+            try ( Connection con = db.getConnection()) {
+                PreparedStatement ps = con.prepareStatement("select cust_id,cust_name,address from customers where cell_no=? and active='YES'");
                 ps.setString(1, cellNo.getText());
                 ResultSet res = ps.executeQuery();
                 if (res.next()) {
                     customerID = res.getLong(1);
                     customer.setText(res.getString(2));
+                    customerAddress = res.getString(3);
                     customerCheck = true;
                     product.grabFocus();
                 } else {

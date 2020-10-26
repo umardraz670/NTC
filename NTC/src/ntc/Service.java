@@ -9,7 +9,10 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -26,7 +29,6 @@ public class Service extends TimerTask{
         try (Connection con=db.getConnection()){
             con.createStatement().executeUpdate("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD'");
             PreparedStatement ps=con.prepareStatement("select * from sales where sale_day=?");
-            System.out.println(new Date(new java.util.Date().getTime()).toString());
             ps.setString(1, new Date(new java.util.Date().getTime()).toString());
             ResultSet res=ps.executeQuery();
             if(!res.next()){
@@ -38,15 +40,17 @@ public class Service extends TimerTask{
                 }
                 con.commit();
                 System.out.println("New Sale Day Added ");
+                Utils.SALE_DAY=new Date(new java.util.Date().getTime()).toString();
             }else{
                 Utils.SALE_DAY=res.getString("sale_day");
+                System.out.println(Utils.SALE_DAY);
                 Utils.CASH_SALE=res.getFloat("cash_sale");
                 Utils.CREDIT_SALE=res.getFloat("credit_sale");
                 Utils.SALE_LOSS=res.getFloat("sale_loss");
                 Utils.SALE_RETURN=res.getFloat("sale_return");                
                 System.out.println("Sale Day Already Saved");
             }
-        } catch (Exception e) {
+        } catch (SQLException |ClassNotFoundException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             System.exit(-1);
         }

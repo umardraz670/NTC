@@ -42,7 +42,7 @@ public class NewCustomer extends javax.swing.JDialog {
             }
         };
         initComponents();
-        getRootPane().getInputMap().put(KeyStroke.getKeyStroke("F9"), action);
+        getRootPane().registerKeyboardAction(action, KeyStroke.getKeyStroke("F9"), JComponent.WHEN_IN_FOCUSED_WINDOW);
         setLocationRelativeTo(null);
     }
     public NewCustomer(java.awt.Frame parent, boolean modal,String cellNo){
