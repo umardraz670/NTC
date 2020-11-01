@@ -211,7 +211,7 @@ public final class MainDesk extends javax.swing.JFrame {
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
-        DailySale obj = new DailySale();
+        DailySale obj = new DailySale(this);
         jDesktopPane1.add(obj);
         obj.show();
         obj.setLocation((int) (jDesktopPane1.getWidth() - obj.getWidth()) / 2, (int) (jDesktopPane1.getHeight() - obj.getHeight()) / 2);

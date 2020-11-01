@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,9 +37,11 @@ public class DailySale extends javax.swing.JInternalFrame {
             + "s.sale_day=? ";
     private final Map<String, Integer> allUsers;
     private DefaultTableModel model;
+    private final JFrame parent;
 
-    public DailySale() {
+    public DailySale(JFrame parent) {
         initComponents();
+        this.parent=parent;
         allUsers = new HashMap<>();
         saleDay.setDate(new Date());
         model = (DefaultTableModel) jXTable1.getModel();
@@ -276,7 +279,7 @@ public class DailySale extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         if(evt.getClickCount()==2){
             if(jXTable1.getSelectedRow()>-1){
-                new SaleInvoiceDetail((long)jXTable1.getValueAt(jXTable1.getSelectedRow(), 1)).show();
+                new SaleInvoiceDetail((long)jXTable1.getValueAt(jXTable1.getSelectedRow(), 1),parent).show();
             }
         }
     }//GEN-LAST:event_jXTable1MouseClicked

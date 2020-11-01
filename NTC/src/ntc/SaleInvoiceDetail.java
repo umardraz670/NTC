@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,16 +18,19 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Umar Rehman
  */
-public class SaleInvoiceDetail extends javax.swing.JFrame {
+public class SaleInvoiceDetail extends javax.swing.JDialog {
 
     /**
      * Creates new form SaleInvoiceDetail
      */
     private StringTokenizer skuTokenizer, qtyTokenizer, ratesTokenizer;
     private final DefaultTableModel model;
+    private final JFrame parent;
 
-    public SaleInvoiceDetail(long invoiceNo) {
+    public SaleInvoiceDetail(long invoiceNo,JFrame parent) {
+        super(parent,false);
         initComponents();
+        this.parent=parent;
         setLocationRelativeTo(null);
         model = (DefaultTableModel) jXTable1.getModel();
         getInvoiceDetails(invoiceNo);
