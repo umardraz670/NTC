@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,15 +74,12 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
     }
 
     private void getAllProducts() {
-        try ( Connection con = db.getConnection()) {
+        try (Connection con = db.getConnection()) {
             ResultSet res = con.createStatement().executeQuery("select sku,description,rate from products");
-            if (!res.next()) {
-                System.out.println("No Records");
-            }
             while (res.next()) {
                 allProducts.addRow(new Object[]{res.getInt("sku"), res.getString("description"), res.getFloat("rate")});
             }
-        } catch (Exception e) {
+        } catch (SQLException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(rootPane, e.getMessage());
             System.exit(-1);
         }
@@ -102,7 +100,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         long invoice = 0;
         if (customerCheck) {
             if (selectedProducts.size() > 0) {
-                try ( Connection con = db.getConnection()) {
+                try (Connection con = db.getConnection()) {
                     con.createStatement().executeUpdate("savepoint a");
                     ResultSet res = con.createStatement().executeQuery("select max(invoice) from sale_invoices");
                     if (res.next()) {
@@ -130,7 +128,9 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
                         if (ps.executeUpdate() == 1 && Utils.cashSale((netTotal - discount) + freight)) {
                             con.commit();
                             JOptionPane.showMessageDialog(rootPane, "Sale Invoice ( " + (invoice) + " ) Saved !");
-                            getPrintInvoice(invoice);
+                            if (jCheckBox2.isSelected()) {
+                                getPrintInvoice(invoice);
+                            }
                             nextInvoice();
                         } else {
                             JOptionPane.showMessageDialog(rootPane, "Error While Saving Invoice Data\nCall Your Vander");
@@ -247,6 +247,9 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        Rate = new javax.swing.JFormattedTextField(nf);
         jPanel2 = new javax.swing.JPanel();
         totalBill = new javax.swing.JTextField();
         discountBill = new javax.swing.JTextField();
@@ -262,40 +265,46 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
 
         setClosable(true);
         setIconifiable(true);
-        setMaximizable(true);
-        setResizable(true);
         setTitle("COUNTER SALE");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Add Parts"));
         jPanel1.setFocusable(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Product Code");
 
         product.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         product.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         product.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                productKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 productKeyReleased(evt);
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setText("QTY");
+        jLabel2.setText("Qty");
 
         qty.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         qty.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        qty.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                qtyActionPerformed(evt);
+            }
+        });
         qty.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 qtyKeyReleased(evt);
             }
         });
 
-        jLabel3.setText("Customer Cell No.");
+        jLabel3.setText("Customer Cell");
         jLabel3.setFocusable(false);
 
         cellNo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        cellNo.setText("03");
         cellNo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cellNo.setPreferredSize(new java.awt.Dimension(100, 26));
         cellNo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 cellNoKeyReleased(evt);
@@ -309,7 +318,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         customer.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         customer.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         customer.setFocusable(false);
-        customer.setPreferredSize(new java.awt.Dimension(150, 26));
+        customer.setPreferredSize(new java.awt.Dimension(100, 26));
 
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Print 2 Invoices");
@@ -325,6 +334,27 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         jButton2.setText("Save");
         jButton2.setFocusable(false);
 
+        jCheckBox2.setSelected(true);
+        jCheckBox2.setText("Enable Prints");
+
+        jLabel5.setText("Rate");
+
+        Rate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        Rate.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        Rate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RateActionPerformed(evt);
+            }
+        });
+        Rate.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                RateKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                RateKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -333,28 +363,37 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cellNo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jCheckBox1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jCheckBox2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cellNo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(customer, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(product, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customer, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(product, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Rate))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,85 +408,65 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
                         .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
                         .addComponent(cellNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)))
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5)
+                        .addComponent(Rate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckBox1)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jCheckBox2)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Billing"));
 
         totalBill.setEditable(false);
-        totalBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 30)); // NOI18N
+        totalBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 26)); // NOI18N
         totalBill.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         totalBill.setBorder(javax.swing.BorderFactory.createTitledBorder("Total"));
         totalBill.setFocusable(false);
-        totalBill.setPreferredSize(new java.awt.Dimension(180, 55));
+        totalBill.setPreferredSize(new java.awt.Dimension(170, 80));
+        jPanel2.add(totalBill);
 
-        discountBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 30)); // NOI18N
+        discountBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 26)); // NOI18N
         discountBill.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         discountBill.setBorder(javax.swing.BorderFactory.createTitledBorder("Discount"));
-        discountBill.setPreferredSize(new java.awt.Dimension(180, 55));
+        discountBill.setPreferredSize(new java.awt.Dimension(170, 80));
         discountBill.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 discountBillKeyReleased(evt);
             }
         });
+        jPanel2.add(discountBill);
 
         grossBill.setEditable(false);
-        grossBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 30)); // NOI18N
+        grossBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 26)); // NOI18N
         grossBill.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         grossBill.setBorder(javax.swing.BorderFactory.createTitledBorder("Gross Total"));
         grossBill.setFocusable(false);
-        grossBill.setPreferredSize(new java.awt.Dimension(180, 55));
+        grossBill.setPreferredSize(new java.awt.Dimension(170, 80));
+        jPanel2.add(grossBill);
 
-        freightBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 30)); // NOI18N
+        freightBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 26)); // NOI18N
         freightBill.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         freightBill.setBorder(javax.swing.BorderFactory.createTitledBorder("Freight"));
-        freightBill.setPreferredSize(new java.awt.Dimension(180, 55));
+        freightBill.setPreferredSize(new java.awt.Dimension(170, 80));
         freightBill.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 freightBillKeyReleased(evt);
             }
         });
+        jPanel2.add(freightBill);
 
         netBill.setEditable(false);
-        netBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 30)); // NOI18N
+        netBill.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 26)); // NOI18N
         netBill.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         netBill.setBorder(javax.swing.BorderFactory.createTitledBorder("Net Total"));
         netBill.setFocusable(false);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(totalBill, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(discountBill, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(grossBill, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(freightBill, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(netBill, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(discountBill, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                    .addComponent(totalBill, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(grossBill, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(netBill)
-                    .addComponent(freightBill, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        netBill.setPreferredSize(new java.awt.Dimension(170, 80));
+        jPanel2.add(netBill);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("All Products"));
 
@@ -473,7 +492,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         jXTable2.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(jXTable2);
         if (jXTable2.getColumnModel().getColumnCount() > 0) {
-            jXTable2.getColumnModel().getColumn(1).setPreferredWidth(150);
+            jXTable2.getColumnModel().getColumn(1).setPreferredWidth(100);
         }
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -482,13 +501,13 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -532,7 +551,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -545,7 +564,7 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -587,6 +606,9 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
             case KeyEvent.VK_ENTER:
                 if (jXTable2.getSelectedRow() > -1) {
                     product.setText(jXTable2.getValueAt(jXTable2.getSelectedRow(), 1).toString());
+                    Rate.setValue(jXTable2.getValueAt(jXTable2.getSelectedRow(), 2));
+                    qty.grabFocus();
+                } else {
                     qty.grabFocus();
                 }
                 break;
@@ -600,61 +622,16 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
     private void qtyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_qtyKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (jXTable2.getSelectedRow() > -1) {
-                if (selectedProducts.containsKey(product.getText())) {
-                    float rate = (float) jXTable2.getValueAt(jXTable2.getSelectedRow(), 2);
-                    int quantity = ((Number) qty.getValue()).intValue();
-                    float amount = (float) (rate * quantity);
-
-                    selectedProducts.get(product.getText()).setQty(selectedProducts.get(product.getText()).getQty() + quantity);
-                    selectedProducts.get(product.getText()).setAmount(selectedProducts.get(product.getText()).getAmount() + amount);
-
-                    cartTable.setValueAt(selectedProducts.get(product.getText()).qty, selectedProducts.get(product.getText()).rowNo, 2);
-                    cartTable.setValueAt(selectedProducts.get(product.getText()).amount, selectedProducts.get(product.getText()).rowNo, 4);
-
-                    total += (selectedProducts.get(product.getText()).amount);
-                    netTotal += (selectedProducts.get(product.getText()).amount);
-                    grossTotal += (selectedProducts.get(product.getText()).amount);
-                    totalBill.setText("" + total);
-                    netBill.setText("" + ((netTotal - discount) + freight));
-                    grossBill.setText("" + grossTotal);
-                    product.setText("");
-                    qty.setText("1");
-                    product.grabFocus();
-                    filter("");
-                } else {
-                    float rate = (float) jXTable2.getValueAt(jXTable2.getSelectedRow(), 2);
-                    int sku = (int) jXTable2.getValueAt(jXTable2.getSelectedRow(), 0);
-                    int quantity = ((Number) qty.getValue()).intValue();
-                    float amount = (float) (rate * quantity);
-                    cartTable.addRow(new Object[]{++counter, product.getText(), quantity, rate, amount});
-                    selectedProducts.put(product.getText(), new productsBeans(counter - 1, sku, product.getText(), quantity, rate, amount));
-                    total += amount;
-                    grossTotal += amount;
-                    netTotal += amount;
-                    totalBill.setText("" + total);
-                    netBill.setText("" + ((netTotal - discount) + freight));
-                    grossBill.setText("" + grossTotal);
-                    product.setText("");
-                    qty.setText("1");
-                    product.grabFocus();
-                    filter("");
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(parent, "Please Select Product");
-                product.setText("");
-                filter("");
-                product.grabFocus();
+            if (((Number) qty.getValue()).intValue() > 0) {
+                Rate.grabFocus();
             }
-
         }
     }//GEN-LAST:event_qtyKeyReleased
 
     private void cellNoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cellNoKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            try ( Connection con = db.getConnection()) {
+            try (Connection con = db.getConnection()) {
                 PreparedStatement ps = con.prepareStatement("select cust_id,cust_name,address from customers where cell_no=? and active='YES'");
                 ps.setString(1, cellNo.getText());
                 ResultSet res = ps.executeQuery();
@@ -707,8 +684,112 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
         saveInvoice();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qtyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_qtyActionPerformed
+
+    private void RateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_RateActionPerformed
+
+    private void RateKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_RateKeyReleased
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (jXTable2.getSelectedRow() > -1) {
+                if (selectedProducts.containsKey(product.getText())) {
+                    float rate = ((Number) Rate.getValue()).floatValue();
+                    int quantity = ((Number) qty.getValue()).intValue();
+                    float amount = (float) (rate * quantity);
+
+                    selectedProducts.get(product.getText()).setQty(selectedProducts.get(product.getText()).getQty() + quantity);
+                    selectedProducts.get(product.getText()).setAmount(selectedProducts.get(product.getText()).getAmount() + amount);
+
+                    cartTable.setValueAt(selectedProducts.get(product.getText()).qty, selectedProducts.get(product.getText()).rowNo, 2);
+                    cartTable.setValueAt(selectedProducts.get(product.getText()).amount, selectedProducts.get(product.getText()).rowNo, 4);
+
+                    total += (selectedProducts.get(product.getText()).amount);
+                    netTotal += (selectedProducts.get(product.getText()).amount);
+                    grossTotal += (selectedProducts.get(product.getText()).amount);
+                    totalBill.setText("" + total);
+                    netBill.setText("" + ((netTotal - discount) + freight));
+                    grossBill.setText("" + grossTotal);
+                    product.setText("");
+                    qty.setValue(0);
+                    Rate.setValue(0);
+                    product.grabFocus();
+                    filter("");
+                } else {
+                    float rate = ((Number) Rate.getValue()).floatValue();
+                    int sku = (int) jXTable2.getValueAt(jXTable2.getSelectedRow(), 0);
+                    int quantity = ((Number) qty.getValue()).intValue();
+                    float amount = (float) (rate * quantity);
+                    cartTable.addRow(new Object[]{++counter, product.getText(), quantity, rate, amount});
+                    selectedProducts.put(product.getText(), new productsBeans(counter - 1, sku, product.getText(), quantity, rate, amount));
+                    total += amount;
+                    grossTotal += amount;
+                    netTotal += amount;
+                    totalBill.setText("" + total);
+                    netBill.setText("" + ((netTotal - discount) + freight));
+                    grossBill.setText("" + grossTotal);
+                    product.setText("");
+                    qty.setValue(0);
+                    Rate.setValue(0);
+                    product.grabFocus();
+                    filter("");
+                }
+
+            } else {
+//                if (JOptionPane.showConfirmDialog(rootPane, "Product not found in system \nDo you want to save it in system ", "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+//                    try (Connection con = db.getConnection()) {
+//                        con.createStatement().executeUpdate("savepoint a");
+//                        PreparedStatement ps = con.prepareStatement("insert into products(description,rate) values(?,?)");
+//                        ps.setString(1, product.getText().toUpperCase());
+//                        ps.setFloat(2, ((Number) Rate.getValue()).floatValue());
+//                        if (ps.executeUpdate() == 1) {
+//                            con.commit();
+//                            float rate = ((Number) Rate.getValue()).floatValue();
+//                            Utils.removeAllRows(allProducts);
+//                            getAllProducts();
+//                            filter("(?i)" + product.getText());
+//                            int sku = (int) jXTable2.getValueAt(jXTable2.getSelectedRow(), 0);
+//                            int quantity = ((Number) qty.getValue()).intValue();
+//                            float amount = (float) (rate * quantity);
+//                            cartTable.addRow(new Object[]{++counter, product.getText(), quantity, rate, amount});
+//                            selectedProducts.put(product.getText(), new productsBeans(counter - 1, sku, product.getText(), quantity, rate, amount));
+//                            total += amount;
+//                            grossTotal += amount;
+//                            netTotal += amount;
+//                            totalBill.setText("" + total);
+//                            netBill.setText("" + ((netTotal - discount) + freight));
+//                            grossBill.setText("" + grossTotal);
+//                            product.setText("254");
+//                            qty.setValue(0);
+//                            Rate.setValue(0);
+//                            product.grabFocus();
+//                        } else {
+//                            con.createStatement().executeUpdate("rollback a");
+//                        }
+//                    } catch (SQLException | ClassNotFoundException e) {
+//                        JOptionPane.showMessageDialog(parent, e.getMessage());
+//                        dispose();
+//                    }
+//                }
+            }
+        }
+    }//GEN-LAST:event_RateKeyReleased
+
+    private void RateKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_RateKeyPressed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_RateKeyPressed
+
+    private void productKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_productKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_productKeyPressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JFormattedTextField Rate;
     private javax.swing.JFormattedTextField cellNo;
     private javax.swing.JTextField customer;
     private javax.swing.JTextField discountBill;
@@ -717,10 +798,12 @@ public class CounterSale extends javax.swing.JInternalFrame implements ListSelec
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

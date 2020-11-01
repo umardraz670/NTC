@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="75f0da4d-c460-4397-8ade-da23387266ef">
-	<property name="ireport.zoom" value="1.3310000000000033"/>
+	<property name="ireport.zoom" value="1.464100000000004"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="29"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -215,42 +215,42 @@ Fiaz03006665078@gmail.com]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement style="table 1" x="3" y="44" width="262" height="42" uuid="c1e0787c-bc02-4274-898a-e979a0839261"/>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Top">
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="table" x="402" y="76" width="148" height="15" uuid="240d87de-2b52-4e98-8ec4-6ff894cffba8"/>
+				<reportElement style="table" x="407" y="76" width="143" height="15" uuid="240d87de-2b52-4e98-8ec4-6ff894cffba8"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<text><![CDATA[Contact :   03094255764]]></text>
+				<text><![CDATA[Contact : 03094255764]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table" x="402" y="46" width="148" height="15" uuid="20bd6a0b-c96d-4e32-b92e-5aaf5b99f77f"/>
+				<reportElement style="table" x="407" y="46" width="143" height="15" uuid="20bd6a0b-c96d-4e32-b92e-5aaf5b99f77f"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<text><![CDATA[Contact :   03217650585]]></text>
+				<text><![CDATA[Contact : 03217650585]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table" x="402" y="31" width="148" height="15" uuid="c5d7fc58-5c15-49b4-96f3-6cd60a9c74ed"/>
+				<reportElement style="table" x="407" y="31" width="143" height="15" uuid="c5d7fc58-5c15-49b4-96f3-6cd60a9c74ed"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<text><![CDATA[Contact :   03006665078]]></text>
+				<text><![CDATA[Contact : 03006665078]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table" x="402" y="61" width="148" height="15" uuid="68c246f1-c11d-4fdf-9a0b-73547ddcaec5"/>
+				<reportElement style="table" x="407" y="61" width="143" height="15" uuid="68c246f1-c11d-4fdf-9a0b-73547ddcaec5"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<text><![CDATA[Contact :   03024058121]]></text>
+				<text><![CDATA[Contact : 03024058121]]></text>
 			</staticText>
 		</band>
 	</columnHeader>

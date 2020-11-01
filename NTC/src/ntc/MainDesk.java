@@ -6,9 +6,14 @@
 package ntc;
 
 import java.beans.PropertyVetoException;
-import java.util.Timer;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author Dell 7010
@@ -18,22 +23,22 @@ public final class MainDesk extends javax.swing.JFrame {
     /**
      * Creates new form MainDesk
      */
-    private final Timer timer;
     private final Service s;
-    public MainDesk() {
+
+    public MainDesk() throws MalformedURLException {
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        timer=new Timer();
         checkPermissions();
-        s=new Service();
+        s = new Service();
         s.run();
+        setIconImage(new ImageIcon(new File("./src/icons/mainLogo.jpg").toURL()).getImage());
     }
-    
-    public void checkPermissions(){
-        if(!login.permissions.equals("admin")){
-            customers.hide();           
+
+    public void checkPermissions() {
+        if (!login.permissions.equals("admin")) {
+            customers.hide();
         }
-        
+
     }
 
     /**
@@ -45,29 +50,40 @@ public final class MainDesk extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
         jDesktopPane1 = new javax.swing.JDesktopPane();
+        jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         users = new javax.swing.JMenu();
         customers = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         sales = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
 
+        jLabel1.setText("jLabel1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Naeem Trading Company Faisalabad Branch \t\tFiaz Ul Haq ( 03006665078 )");
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/homeCollage.png"))); // NOI18N
+
+        jDesktopPane1.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 917, Short.MAX_VALUE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 917, Short.MAX_VALUE)
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 588, Short.MAX_VALUE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 588, Short.MAX_VALUE)
         );
 
         users.setText("USERS  ");
@@ -80,7 +96,7 @@ public final class MainDesk extends javax.swing.JFrame {
         customers.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
 
         jMenuItem1.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jMenuItem1.setText("New Customer          ");
+        jMenuItem1.setText("NEW CUSTOMER          ");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -95,7 +111,7 @@ public final class MainDesk extends javax.swing.JFrame {
         sales.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
 
         jMenuItem2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jMenuItem2.setText("Counter Sale          ");
+        jMenuItem2.setText("SALE POINT          ");
         jMenuItem2.setMinimumSize(new java.awt.Dimension(780, 680));
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,6 +120,26 @@ public final class MainDesk extends javax.swing.JFrame {
         });
         sales.add(jMenuItem2);
 
+        jMenuItem3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jMenuItem3.setText("DAILY SALE");
+        jMenuItem3.setMinimumSize(new java.awt.Dimension(780, 680));
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        sales.add(jMenuItem3);
+
+        jMenuItem4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jMenuItem4.setText("SALE RETURN");
+        jMenuItem4.setMinimumSize(new java.awt.Dimension(780, 680));
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        sales.add(jMenuItem4);
+
         jMenuBar1.add(sales);
 
         jMenu8.setText("PRODUCTS  ");
@@ -111,7 +147,7 @@ public final class MainDesk extends javax.swing.JFrame {
         jMenu8.setFont(new java.awt.Font("Segoe UI Semibold", 1, 16)); // NOI18N
 
         jMenuItem7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jMenuItem7.setText("Add Product          ");
+        jMenuItem7.setText("NEW PRODUCT          ");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -144,20 +180,20 @@ public final class MainDesk extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        new NewCustomer(this,true,"").show();
+        new NewCustomer(this, true, "").show();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
 //         TODO add your handling code here:
         try {
-            CounterSale obj=new CounterSale(this);
+            CounterSale obj = new CounterSale(this);
             jDesktopPane1.add(obj);
             obj.show();
-            obj.setLocation((int)(jDesktopPane1.getWidth()-obj.getWidth())/2,(int)(jDesktopPane1.getHeight()-obj.getHeight())/2);
+            obj.setLocation((int) (jDesktopPane1.getWidth() - obj.getWidth()) / 2, (int) (jDesktopPane1.getHeight() - obj.getHeight()) / 2);
             obj.setSelected(true);
         } catch (PropertyVetoException e) {
             JOptionPane.showMessageDialog(rootPane, e.getMessage());
-        }        
+        }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -165,13 +201,39 @@ public final class MainDesk extends javax.swing.JFrame {
         NewProduct obj = new NewProduct();
         jDesktopPane1.add(obj);
         obj.show();
-        obj.setLocation((int)(jDesktopPane1.getWidth()-obj.getWidth())/2,(int)(jDesktopPane1.getHeight()-obj.getHeight())/2);
+        obj.setLocation((int) (jDesktopPane1.getWidth() - obj.getWidth()) / 2, (int) (jDesktopPane1.getHeight() - obj.getHeight()) / 2);
         try {
             obj.setSelected(true);
         } catch (PropertyVetoException ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        DailySale obj = new DailySale();
+        jDesktopPane1.add(obj);
+        obj.show();
+        obj.setLocation((int) (jDesktopPane1.getWidth() - obj.getWidth()) / 2, (int) (jDesktopPane1.getHeight() - obj.getHeight()) / 2);
+        try {
+            obj.setSelected(true);
+        } catch (PropertyVetoException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        SaleReturn obj = new SaleReturn();
+        jDesktopPane1.add(obj);
+        obj.show();
+        obj.setLocation((int) (jDesktopPane1.getWidth() - obj.getWidth()) / 2, (int) (jDesktopPane1.getHeight() - obj.getHeight()) / 2);
+        try {
+            obj.setSelected(true);
+        } catch (PropertyVetoException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -204,9 +266,11 @@ public final class MainDesk extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
                 new MainDesk().setVisible(true);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(MainDesk.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
@@ -214,11 +278,15 @@ public final class MainDesk extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu customers;
     private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu8;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenu sales;
     private javax.swing.JMenu users;
