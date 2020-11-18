@@ -32,7 +32,7 @@ public class login extends javax.swing.JFrame {
      * Creates new form login
      */
     public static Properties config;
-    private final static String PROPERTY_FILE="./src/ntc/config.properties";
+    private final static String PROPERTY_FILE="../ntc/config.properties";
     public static boolean property_read=false;
     public static String permissions="";
     
@@ -40,24 +40,28 @@ public class login extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         config = new Properties();
-        try {
-            InputStream in = null;
-            in = new FileInputStream(new File(PROPERTY_FILE));
-            if (in != null) {
-                config.load(in);
-                in.close();
-                property_read = true;
-                System.out.println("Property File Loaded Successfully ");
-            } else {
-                property_read = false;
-            }
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
-            System.exit(-1);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
-            System.exit(-1);
-        }     
+//        try {
+//            File f=new File("./");
+//            for(File fi:f.listFiles()){
+//                System.out.println(fi.getName());
+//            }
+//            InputStream in = null;
+//            in = new FileInputStream(new File(PROPERTY_FILE));
+//            if (in != null) {
+//                config.load(in);
+//                in.close();
+//                property_read = true;
+//                System.out.println("Property File Loaded Successfully ");
+//            } else {
+//                property_read = false;
+//            }
+//        } catch (FileNotFoundException ex) {
+//            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+//            System.exit(-1);
+//        } catch (IOException ex) {
+//            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+//            System.exit(-1);
+//        }     
     }
 
     /**
@@ -201,9 +205,7 @@ public class login extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
             getAuthentication();
-        } catch (HeadlessException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
+        } catch (HeadlessException | MalformedURLException ex) {
             Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -279,7 +281,7 @@ public class login extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
