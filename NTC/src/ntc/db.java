@@ -16,9 +16,6 @@ public class db {
         Class.forName(DRIVER_URL);
         con = DriverManager.getConnection(DB_URL, USER, PASSWORD);
         con.setAutoCommit(false);
-//        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-//        con = DriverManager.getConnection(db_url,"Umar Rrehman","mssqlserver");
-       // con.setAutoCommit(false);
         return con;
     }
 }
