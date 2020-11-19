@@ -7,8 +7,10 @@ import java.sql.SQLException;
 public class db {
     protected static String DB_URL="jdbc:oracle:thin:@localhost:1521:XE";
     protected static String DRIVER_URL="oracle.jdbc.OracleDriver";
-    protected static String USER="NTCFSD";
+//    protected static String USER="NTCFSD";
     protected static String PASSWORD="fiazNTC5078$";
+    protected static String USER="User2";
+    
 //    private final static String db_url="jdbc:sqlserver://localhost;instance=mssqlserver;Database=NTC";
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {

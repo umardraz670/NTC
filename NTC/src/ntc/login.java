@@ -32,14 +32,16 @@ public class login extends javax.swing.JFrame {
      * Creates new form login
      */
     public static Properties config;
-    private final static String PROPERTY_FILE="../ntc/config.properties";
-    public static boolean property_read=false;
-    public static String permissions="";
-    
+    private final static String PROPERTY_FILE = "../ntc/config.properties";
+    public static boolean property_read = false;
+    public static String permissions = "";
+
     public login() {
         initComponents();
         setLocationRelativeTo(null);
         config = new Properties();
+        
+        JOptionPane.showMessageDialog(null, new File("../t.txt").getAbsolutePath());
 //        try {
 //            File f=new File("./");
 //            for(File fi:f.listFiles()){
@@ -211,30 +213,30 @@ public class login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void getAuthentication() throws HeadlessException, MalformedURLException {
-        try(Connection con=db.getConnection()) {
+        try (Connection con = db.getConnection()) {
             // TODO add your handling code here:
-            if(!jTextField1.getText().equals("")){
-                if(!jPasswordField1.getText().equals("")){
-                    PreparedStatement ps=con.prepareStatement("select * from users where username=? and password=?");
+            if (!jTextField1.getText().equals("")) {
+                if (!jPasswordField1.getText().equals("")) {
+                    PreparedStatement ps = con.prepareStatement("select * from users where username=? and password=?");
                     ps.setString(1, jTextField1.getText());
                     ps.setString(2, jPasswordField1.getText());
-                    ResultSet res=ps.executeQuery();
-                    if(res.next()){
-                        permissions=res.getString("rights");
-                        boolean active="YES".equals(res.getString("active"));
-                        Utils.USER_ID=res.getLong("ID");
-                        if(active){
+                    ResultSet res = ps.executeQuery();
+                    if (res.next()) {
+                        permissions = res.getString("rights");
+                        boolean active = "YES".equals(res.getString("active"));
+                        Utils.USER_ID = res.getLong("ID");
+                        if (active) {
                             new MainDesk().show();
                             this.hide();
-                        }else{
+                        } else {
                             JOptionPane.showMessageDialog(rootPane, "Your Account is Locked !\n Please Contact to Your Administrator");
                         }
-                    }else{
+                    } else {
                         JOptionPane.showMessageDialog(rootPane, "Username/Password Incorrect");
                         jTextField1.setText("");
                         jPasswordField1.setText("");
                         jTextField1.grabFocus();
-                        
+
                     }
                 }
             }
@@ -245,7 +247,7 @@ public class login extends javax.swing.JFrame {
 
     private void jButton1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyReleased
         // TODO add your handling code here:
-        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
                 getAuthentication();
             } catch (HeadlessException | MalformedURLException ex) {
@@ -256,7 +258,7 @@ public class login extends javax.swing.JFrame {
 
     private void jPasswordField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordField1KeyReleased
         // TODO add your handling code here:
-        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
                 getAuthentication();
             } catch (HeadlessException | MalformedURLException ex) {
@@ -305,7 +307,7 @@ public class login extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
-        
+
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

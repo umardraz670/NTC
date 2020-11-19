@@ -63,9 +63,9 @@ public class Utils {
 
     public static void printInvoice(Map<String, Object> parameters, int pages) {
         try {
-            JasperReport report = JasperCompileManager.compileReport(new FileInputStream(new File("./src/reports/saleInvoice.jrxml")));
+            JasperReport report = JasperCompileManager.compileReport(new FileInputStream(new File("./reports/saleInvoice.jrxml")));
             JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
-            JasperViewer.viewReport(print,false);
+            JasperViewer.viewReport(print, false);
 //            if (pages == 2) {
 //                JasperPrintManager.printReport(print, false);
 //                JasperPrintManager.printReport(print, false);
@@ -85,7 +85,8 @@ public class Utils {
             model.removeRow(i);
         }
     }
-    public static String todayDate(){
+
+    public static String todayDate() {
         return new Date(new java.util.Date().getTime()).toString();
     }
 }
